@@ -1,31 +1,42 @@
-import React, { useCallback } from "react";
-import '../../index.css'
+import { EditorState } from "@codemirror/state";
+import React, { useCallback, useEffect } from "react";
+import "../../index.css";
 
-const editorStyle : React.CSSProperties = {
-    minHeight: "99.5vh",
-    width:"100%",
-    
-
-}
+import useCodeMirror from './useCodeMirror'
 
 interface EditorProps {
-    doc: string,
-    onChange: (doc: string) => void
+  doc: string;
+  onChange: (doc: string) => void;
+}
+
+const editorStyle : React.CSSProperties = {
+  minHeight: "100vh",
+  width:"100%",
+  background: "transparent",
 }
 
 
 const Editor : React.FC<EditorProps> = (props: EditorProps) => {
-    const { onChange, doc} = props
-    const handleChange = useCallback(
-        (event : React.ChangeEvent<HTMLTextAreaElement>) => onChange(event.target.value),
-        [onChange]
+  const { onChange, doc} = props
+  
+  
+  const handleChange = useCallback(
+      (state: EditorState) => onChange(state.doc.toString()),
+      [onChange]
       )
-    return(
-        <div>
-            <textarea value={doc} onChange={handleChange} style={editorStyle} autoFocus className="editor">
-            </textarea>
-        </div>
-    )
+      
+  const [refContainer, editorView] = useCodeMirror<HTMLDivElement>({
+      doc: doc,
+      onChange: state => handleChange(state)
+  })
+      
+ useEffect(()=>{
+      if(editorView){
+
+      }
+ },[editorView])
+ return <div style={editorStyle} ref={refContainer} className="editor"></div>
 }
 
 export default Editor; 
+
